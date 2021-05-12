@@ -1,0 +1,346 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-fluid">
+    <form action="/single" method="post">
+        <div class="row">
+            <div class="col-8">
+                <div class="row m-3">
+                    <!-- myAppはじめ-->
+                    <div class="col-6" id="myApp">
+                        <label>自分の選出</label>
+                        <div v-for="i in 6">
+                            <div class="form-check form-check-inline" style="margin: 1px;padding: 0px">
+                                <label>
+                                    1.<input class="form-check-input" type="radio" name="myFirst" v-bind:value="i"
+                                             v-bind:id="'myRadio'+i+'-1'"
+                                             v-on:click="removeSameRadio">
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline" style="margin: 1px;padding: 0px">
+                                <label>
+                                    2.<input class="form-check-input" type="radio" name="mySecond"
+                                             v-bind:value="i"
+                                             v-bind:id="'myRadio'+i+'-2'"
+                                             v-on:click="removeSameRadio">
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline" style="margin: 1px;padding: 0px">
+                                <label> 3.<input class="form-check-input" type="radio" name="myThird"
+                                                 v-bind:value="i"
+                                                 v-bind:id="'myRadio'+i+'-3'"
+                                                 v-on:click="removeSameRadio">
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline" style="margin: 1px;padding: 0px">
+                                <label>
+                                    場.<input class="form-check-input" type="radio" name="myNow"
+                                             v-on:click="clickNow(i)">
+                                </label>
+                            </div>
+                            <label>
+                                <input class="form-control" type="text" v-bind:name="'myPokemon' + i"
+                                       v-on:keyup="searchName"
+                                       v-bind:id="'myPokelist'+i" v-bind:index="i"
+                                       v-bind:placeholder="'ポケモン' + i" @blur="focusOut(i)"
+                                       style="height: 32px;width:150px">
+                            </label>
+
+                            <img v-bind:src="myPokeImg(i)">
+
+                            <div class="pokeName">
+                                <ul v-bind:class="{ hide: names[i-1].length===0}"
+                                    v-bind:ref="'myPokelistValue'+i">
+                                    <div v-for="name in names[i-1]">
+                                        <li v-on:click="clickSelf(i, name)">[[name]]</li>
+                                    </div>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" id="rivalApp">
+                        <label>相手の選出</label>
+                        <div v-for="i in 6">
+                            <div class="form-check form-check-inline" style="margin: 1px;padding: 0px">
+                                <label>
+                                    1.<input class="form-check-input" type="radio" name="rivalFirst" v-bind:value="i"
+                                             v-bind:id="'rivalRadio'+i+'-1'"
+                                             v-on:click="removeSameRadio">
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline" style="margin: 1px;padding: 0px">
+                                <label>
+                                    2.<input class="form-check-input" type="radio" name="rivalSecond"
+                                             v-bind:value="i"
+                                             v-bind:id="'rivalRadio'+i+'-2'"
+                                             v-on:click="removeSameRadio">
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline" style="margin: 1px;padding: 0px">
+                                <label>
+                                    3.<input class="form-check-input" type="radio" name="rivalThird" v-bind:value="i"
+                                             v-bind:id="'rivalRadio'+i+'-3'"
+                                             v-on:click="removeSameRadio">
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline" style="margin: 1px;padding: 0px">
+                                <label>
+                                    場.<input class="form-check-input" type="radio" name="rivalNow"
+                                             v-on:click="clickNow(i)">
+                                </label>
+                            </div>
+                            <label>
+                                <input class="form-control" type="text" v-bind:name="'rivalPokemon' + i"
+                                       v-on:keyup="searchName"
+                                       v-bind:id="'rivalPokelist'+i" v-bind:index="i"
+                                       v-bind:placeholder="'ポケモン' + i" @blur="focusOut(i)"
+                                       style="height: 32px;width:150px">
+                            </label>
+                            <img v-bind:src="rivalPokeImg(i)">
+                            <div class="pokeName">
+                                <ul v-bind:class="{ hide: names[i-1].length===0}"
+                                    v-bind:ref="'rivalPokelistValue'+i">
+                                    <div v-for="name in names[i-1]">
+                                        <li v-on:click="clickSelf(i, name)">[[name]]</li>
+                                    </div>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="m-3 border rounded border-dark">
+                    <ul class="nav nav-pills nav-fill mb-2">
+                        <li class="nav-item border border-info rounded">
+                            <a href="#myInfo" class="nav-link" data-toggle="tab">自分の情報</a>
+                        </li>
+                        <li class="nav-item border border-info rounded">
+                            <a href="#rivalInfo" class="nav-link active" data-toggle="tab">相手の情報</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="myInfo" class="tab-pane m-2">
+                            <div class="row m-1">
+                                <div class="col-6">
+                                    <div class="form-inline">
+                                        <label for="myPokeNow">場のポケモン：</label>
+                                        <input type="text" id="myPokeNow" class="form-control" readonly
+                                               style="height: 32px;width:150px">
+                                        <img v-bind:src="myPokeImg">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row m-1">
+                                <div class="col-4">
+                                    <div class="PokeList">
+                                        <div class="form-inline">
+                                            <label for="myPokeItem">持ち物：</label>
+                                            <input type="text" id="myPokeItem" class="form-control"
+                                                   v-on:keyup="searchItemName" @blur="focusOut" v-on:change="changeItem"
+                                                   style="height: 32px;width:150px">
+                                        </div>
+                                        <ul v-bind:class="{ hide: items.length===0}"
+                                            ref="myPokeItemValue">
+                                            <div v-for="item in items">
+                                                <li v-on:click="clickSelf(item)">[[item]]</li>
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-inline">
+                                        <label for="myPokeAbi">特性：</label>
+                                        <select id="myPokeAbi" class="form-control"
+                                                value="" v-on:change="changeAbi"
+                                                style="height: 32px;width:150px">>
+                                            <option v-for="abi in abiList">[[abi]]</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-inline">
+                                        <label for="myPokeChar">性格：</label>
+                                        <input type="text" id="myPokeChar" class="form-control"
+                                               v-on:keyup="changeChar"
+                                               style="height: 32px;width:150px">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row m-1">
+                                <div class="col-8">
+                                    <table class="table table-bordered table-sm">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col"></th>
+                                            <th scope="col" class="three-value-stats">ＨＰ</th>
+                                            <th scope="col" class="three-value-stats">こうげき</th>
+                                            <th scope="col" class="three-value-stats">ぼうぎょ</th>
+                                            <th scope="col" class="three-value-stats">とくこう</th>
+                                            <th scope="col" class="three-value-stats">とくぼう</th>
+                                            <th scope="col" class="three-value-stats">すばやさ</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <th scope="row" class="three-value">種族値</th>
+                                            <td v-for="stats in statsType">
+                                                <div class="form-group">
+                                                    <input type="number" step="4"
+                                                           class="form-control p-1 three-value-input"
+                                                           value="0" v-bind:id="'base_'+stats" readonly>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="three-value">個体値</th>
+                                            <td v-for="stats in this.statsType">
+                                                <div class="form-group">
+                                                    <input type="number"
+                                                           class="form-control p-1 three-value-input"
+                                                           v-bind:id="'IV_'+stats" value="31"
+                                                           v-on:change="changeIV(stats)"
+                                                           max="31" min="0">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="three-value">努力値</th>
+                                            <td v-for="stats in this.statsType">
+                                                <div class="form-group">
+                                                    <input type="number" step="4"
+                                                           class="form-control p-1 three-value-input"
+                                                           v-bind:id="'EV_'+stats" value="0"
+                                                           v-on:change="changeEV(stats)"
+                                                           max="252" min="0">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="three-value">実数値</th>
+                                            <td v-for="stats in this.statsType">
+                                                <div class="form-group">
+                                                    <input type="number" step="4"
+                                                           class="form-control p-1 three-value-input"
+                                                           v-bind:id="'RN_'+stats" v-model.number="realNumber(stats)"
+                                                           readonly>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-4">
+                                    <div v-for="i in 4" class="form-inline mb-1">
+                                        <label v-bind:for="'myPokeWeapon'+i">技[[i]]：</label>
+                                        <input type="text" v-bind:id="'myPokeWeapon'+i" class="form-control"
+                                               v-on:change="changeWeapon"
+                                               style="height: 32px;width: 150px">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="rivalInfo" class="tab-pane active m-2">
+                            <div class="row m-2">
+                                <div class="form-inline col-6">
+                                    <label for="trainerName">TN：</label>
+                                    <input type="text" id="trainerName" class="form-control">
+                                </div>
+                                <div class="form-inline col-6">
+                                    <label for="rivalRank">順位：</label>
+                                    <input type="number" id="rivalRank" class="form-control" min="1">
+                                </div>
+                            </div>
+
+                            <div class="row m-1">
+                                <div class="col-6">
+                                    <div class="form-inline">
+                                        <label for="rivalPokeNow">場のポケモン：</label>
+                                        <input type="text" id="rivalPokeNow" class="form-control" readonly
+                                               style="height: 32px;width:150px">
+                                        <img v-bind:src="rivalPokeImg">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row m-1">
+                                <div class="col-4">
+                                    <div class="PokeList">
+                                        <div class="form-inline">
+                                            <label for="rivalPokeItem">持ち物：</label>
+                                            <input type="text" id="rivalPokeItem" class="form-control"
+                                                   v-on:keyup="searchName" @blur="focusOut" v-on:change="changeItem"
+                                                   style="height: 32px;width:150px">
+                                        </div>
+                                        <ul v-bind:class="{ hide: items.length===0}"
+                                            ref="rivalPokeItemValue">
+                                            <div v-for="item in items">
+                                                <li v-on:click="clickSelf(item)">[[item]]</li>
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-inline">
+                                        <label for="rivalPokeAbi">特性：</label>
+                                        <select id="rivalPokeAbi" class="form-control"
+                                                value="" v-on:change="changeAbi"
+                                                style="height: 32px;width:150px">>
+                                            <option v-for="abi in abiList">[[abi]]</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-inline">
+                                        <label for="rivalPokeChar">性格：</label>
+                                        <input type="text" id="rivalPokeChar" class="form-control"
+                                               style="height: 32px;width:150px">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row m-1">
+                                <div class="col-4">
+                                    <div v-for="i in 4" class="form-inline mb-1">
+                                        <label v-bind:for="'rivalPokeWeapon'+i">技[[i]]：</label>
+                                        <input type="text" v-bind:id="'rivalPokeWeapon'+i" class="form-control"
+                                               style="height: 32px;width: 150px">
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <div class="form-group mb-1">
+                                        <label for="note">備考：</label>
+                                        <textarea type="text" id="note" class="form-control"
+                                                  style="height: 100px;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="mt-3 mb-3">
+                    <ul class="nav nav-pills nav-fill">
+                        <li class="nav-item border border-info rounded">
+                            <a href="#rivalSearch" class="nav-link active" data-toggle="tab">TN検索</a>
+                        </li>
+                        <li class="nav-item border border-info rounded">
+                            <a href="#calcDamage" class="nav-link" data-toggle="tab">ダメージ計算</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="rivalSearch" class="tab-pane active">
+                            TN
+                        </div>
+                        <div id="calcDamage" class="tab-pane">
+                            ダメージ
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="submit()">対戦終了</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="/static/single.js"></script>
+<link rel="stylesheet" href="/static/single.css">
+
+{% endblock %}

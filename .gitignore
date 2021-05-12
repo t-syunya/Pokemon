@@ -1,0 +1,6 @@
+venv
+.idea
+data
+!/log.md
+!/pokemon_data_log.db
+!/test.py

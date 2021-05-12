@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container">
+    <h1>ポケモン対戦記録の管理ツール</h1>
+    <form action="/start" method="post">
+        シングルまたはダブルを選択して対戦を開始します。
+        <div class="form-check">
+            <input type="radio" name="category" value="single" checked>シングル
+        </div>
+        <div class="form-check">
+            <input type="radio" name="category" value="double">ダブル
+        </div>
+        <input type="submit" name="start" value="START">
+    </form>
+</div>
+{% endblock %}

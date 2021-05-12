@@ -1,0 +1,85 @@
+ul {
+    list-style-type: none;
+}
+
+input #rivalRank.form-control {
+    margin: 0px;
+    padding: 0px;
+    width: 200px;
+    height: 30px;
+}
+
+.pokeName ul {
+    list-style-type: none;
+    position: fixed;
+    z-index: 10;
+    text-align: center;
+    padding: 0.1em 0;
+    background: white;
+    border: 1px solid gray;
+    border-radius: 0.3em;
+    height: auto;
+    max-height: 30vh;
+    overflow-y: scroll;
+}
+
+.pokeName li {
+    padding: 0.8em 1em;
+    border: none;
+}
+
+.pokeName li:hover {
+    color: #474747;
+    background: #eeeeee;
+}
+
+.PokeList ul {
+    list-style-type: none;
+    position: fixed;
+    z-index: 10;
+    text-align: center;
+    padding: 0.1em 0;
+    background: white;
+    border: 1px solid gray;
+    border-radius: 0.3em;
+    height: auto;
+    max-height: 30vh;
+    overflow-y: scroll;
+}
+
+.PokeList li {
+    padding: 0.8em 1em;
+    border: none;
+}
+
+.pokeName li:hover {
+    color: #474747;
+    background: #eeeeee;
+}
+
+
+.hide {
+    display: none;
+}
+
+.three-value {
+    font-size: 12px;
+    padding: 0px;
+    margin: 0 auto;
+}
+
+.three-value-stats {
+    font-size: 14px;
+    padding: 0px;
+    margin: 0 auto;
+}
+
+.three-value-input {
+    width: 60px;
+    height: 30px;
+    margin: 0px;
+}
+
+.form-group {
+    margin: 0;
+}
