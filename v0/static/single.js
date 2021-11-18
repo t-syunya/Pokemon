@@ -157,7 +157,8 @@ let rivalApp = new Vue({
                     let v = e.target.getBoundingClientRect()
                     this.$refs["rivalPokelistValue" + e.target.getAttribute("index")][0].style = `top: ${v.x + v.height}; left: ${v.x}px;width: ${v.width}px;`
                 })
-        },
+        }
+        ,
         clickSelf: function (i, name) {
             document.getElementById("rivalPokelist" + i).value = name
             this.names[i - 1] = []
@@ -166,7 +167,8 @@ let rivalApp = new Vue({
                 .then(response => {
                     this.num[i - 1] = JSON.parse(response.data).No;
                 })
-        },
+        }
+        ,
         clickNow: function (i) {
             let name = document.getElementById("rivalPokelist" + i).value
             document.getElementById("rivalPokeNow").value = name;
@@ -183,7 +185,8 @@ let rivalApp = new Vue({
                     document.getElementById("rivalPokeWeapon4").value = rivalInfo.uniquePrams[i].weapon4;
                     rivalInfo.nowNum = i
                 })
-        },
+        }
+        ,
         removeSameRadio: function (e) {
             let current;
             switch (e.target.name) {
@@ -210,14 +213,16 @@ let rivalApp = new Vue({
                     elem.checked = false;
                 }
             }
-        },
+        }
+        ,
         focusOut: function (i) {
             const app = this;
             setTimeout(function () {
                 app.names[i - 1] = []
             }, 200)
         }
-    },
+    }
+    ,
     computed: {
         rivalPokeImg: function () {
             return function (i) {
